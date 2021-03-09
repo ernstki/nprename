@@ -1,0 +1,6 @@
+# vim: ft=ruby
+# register/regenerate at https://thenounproject.com/developers/apps
+module NPConfig
+  TOKEN = "00000000000000000000000000000000"
+  SECRET = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+end

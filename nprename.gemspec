@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "nprename"
-  s.version = "1.0.0"
+  s.version = "1.0.1"
   s.summary = "Noun Project file renamer"
   s.description = "creates a usable filename from a Noun Project ID"
   s.authors = ["Kevin Ernst"]
