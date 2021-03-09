@@ -1,37 +1,131 @@
 #!/usr/bin/env ruby
+require 'optparse'
+require 'fileutils'
 require 'noun_project_api'
 
 # read in user config file, if it exists, for NPConfig module
-require File.expand_path("~/.config/npfetch/config.rb")
+require File.expand_path("~/.config/nprename/config.rb")
 
-if ARGV.empty?
-  $stderr.puts <<-ERR
+options = {
+    :filename => nil,
+    :ext => '',
+    :dump => nil,
+    :url => nil,
+    :keep => false,
+    :dry_run => false,
+    :base_url => 'https://thenounproject.com',
+}
 
-  npname - creates a usable filename from a Noun Project ID
+option_parser = OptionParser.new do |opts|
+    exename = File.basename($PROGRAM_NAME)
+    opts.banner = "\
+  #{exename} - creates a usable filename from a Noun Project ID
 
   usage:
-    npname [ID | FILENAME]
+    #{exename} [-h|--help]
+    #{exename} [-d|--dump] [-u|--url] [-k|--keep] [-n|--dry-run] [ID | FILENAME]
 
   where:
-    ID        is a Noun Project ID
-    FILENAME  is a filename (with an embedded Noun Project ID)
+"
+    opts.on('-d', '--dump', 'dumps a JSON record for ID (and quits)') do 
+        options[:dump] = true
+    end
 
-  ERR
-  exit(1)
+    opts.on('-u', '--url', 'prints the URL for ID (and quits)') do 
+        options[:url] = true
+    end
+
+    opts.on('-k', '--keep', '--keep-original',
+            'leaves original file (rather than removing it)') do 
+        options[:keep] = true
+    end
+
+    opts.on('-n', '--dryrun', '--dry-run',
+            "show what would happen, but don't do it") do 
+        options[:dry_run] = true
+    end
+end
+
+# not supported in 2.3.whatever comes with macOS 10.14.x
+#option_parser.parse!(into: options)
+option_parser.parse!
+
+# default to no extension
+
+if ARGV.empty?
+    $stderr.puts option_parser
+    $stderr.puts "\n  ERROR: missing required ID or FILENAME."
+    exit(1)
 end
 
 # if ARGV[0] looks like a readable file, parse out the ID from that
-if File.stat(ARGV[0]).is_file? and File.stat(ARGV[0]).is_readable?
-    exit(1)
+if File.exists?(ARGV[0]) and File.stat(ARGV[0]).file? \
+        and File.stat(ARGV[0]).readable?
+
+    options[:filename] = ARGV[0]
+    options[:dirname] = File.dirname(ARGV[0])
+    basename = File.basename(ARGV[0])
+    if id = /\d{1,10}/.match(basename)
+        options[:ext] = File.extname(basename)
+    else
+        $stderr.puts "ERROR: no ID found in input filename '#{basename}'"
+        exit(1)
+    end
+else
+    if ARGV[0] =~ /^\d{1,10}$/
+        id = ARGV[0]
+    else
+        $stderr.puts "ERROR: '#{ARGV[0]}' is not a valid ID"
+        exit(1)
+    end
 end
-  
 
 icon_finder = NounProjectApi::IconRetriever.new(NPConfig::TOKEN,
                                                 NPConfig::SECRET)
-result = icon_finder.find(ARGV[0])
+if not result = icon_finder.find(id)
+    $stderr.puts "ERROR: Noun Project ID '#{id}' not found"
+    exit(1)
+end
 
-author_username = result.original_hash[:collections][0][:author][:username]
+if options[:dump]
+    require 'pp'
+    puts result.original_hash.to_json
+    exit
+elsif options[:url]
+    puts options[:base_url] + result.original_hash[:permalink]
+    exit
+end
+
+# otherwise, actually rename the file
+author_username = result.original_hash[:uploader][:username]
 term_slug = result.original_hash[:term_slug]
-filename = ["nounproject", ARGV[0], term_slug, author_username].join("-")
+newbasename = ["nounproject", id, term_slug, author_username].join("-")
+
+if options[:filename].nil?
+    # no hay archivo -- there is no file
+    puts newbasename
+    exit
+end
+
+# otherwise...
+newfilename = File.join(options[:dirname], newbasename) + options[:ext]
+msg = "#{options[:filename]} -> #{newfilename}"
+
+if options[:keep]
+    msg += " (keeping original)"
+    if options[:dry_run]
+        $stderr.puts "would copy " + msg
+    else
+        $stderr.puts "copying " + msg
+        FileUtils.cp options[:filename], newfilename, :preserve => true
+    end
+else
+    if options[:dry_run]
+        $stderr.puts "would move " + msg
+    else
+        $stderr.puts "moving " + msg
+        FileUtils.mv options[:filename], newfilename
+    end
+end
 
 # vim: sw=4 ts=4
