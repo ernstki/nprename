@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "nprename"
-  s.version = "0.1.0"
+  s.version = "1.0.0"
   s.summary = "Noun Project file renamer"
   s.description = "creates a usable filename from a Noun Project ID"
   s.authors = ["Kevin Ernst"]
@@ -10,6 +10,4 @@ Gem::Specification.new do |s|
   s.executables = ["nprename"]
   s.add_runtime_dependency "noun-project-api",
     ["~> 3.1"]
-  s.add_development_dependency "gem-release",
-    ["~> 2.2"]
 end
