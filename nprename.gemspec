@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.description = "creates a usable filename from a Noun Project ID"
   s.authors = ["Kevin Ernst"]
   s.email = "ernstki@mail.uc.edu"
-  s.homepage = "https://github.com/ernstki"
+  s.homepage = "https://github.com/ernstki/nprename"
   s.license = "MIT"
   s.executables = ["nprename"]
   s.required_ruby_version = "~> 2.3"
