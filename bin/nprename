@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+require 'noun_project_api'
+
+# read in user config file, if it exists, for NPConfig module
+require File.expand_path("~/.config/npfetch/config.rb")
+
+if ARGV.empty?
+  $stderr.puts <<-ERR
+
+  npname - creates a usable filename from a Noun Project ID
+
+  usage:
+    npname [ID | FILENAME]
+
+  where:
+    ID        is a Noun Project ID
+    FILENAME  is a filename (with an embedded Noun Project ID)
+
+  ERR
+  exit(1)
+end
+
+# if ARGV[0] looks like a readable file, parse out the ID from that
+if File.stat(ARGV[0]).is_file? and File.stat(ARGV[0]).is_readable?
+    exit(1)
+end
+  
+
+icon_finder = NounProjectApi::IconRetriever.new(NPConfig::TOKEN,
+                                                NPConfig::SECRET)
+result = icon_finder.find(ARGV[0])
+
+author_username = result.original_hash[:collections][0][:author][:username]
+term_slug = result.original_hash[:term_slug]
+filename = ["nounproject", ARGV[0], term_slug, author_username].join("-")
+
+# vim: sw=4 ts=4
