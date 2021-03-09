@@ -8,4 +8,8 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ernstki"
   s.license = "MIT"
   s.executables = ["nprename"]
+  s.add_runtime_dependency "noun-project-api",
+    ["~> 3.1"]
+  s.add_development_dependency "gem-release",
+    ["~> 2.2"]
 end
