@@ -4,6 +4,13 @@
 This utility helps me keep a standard file naming convention for icons
 downloaded from [The Noun Project][1].
 
+This utility does _not_ download the icons. I have my own way of doing this,
+which usually involves picking foreground/background colors on the web site,
+and then doing a screenshot of the image. There doesn't seem to be
+a programmatic way of doing this through the API, and the web site has a nice
+set of pre-selected colors anyway; there's no point in trying to reimplement
+what already works fine in that regard.
+
 The naming convention I use is:
 
     nounproject-<id>-<term_slug>-<author_username>.<ext>
