@@ -93,7 +93,7 @@ Actually do it:
 Author
 ------
 
-Kevin Ernst [ernstki -at- mail.uc.edu](mailto:ernstki%20-at-%20mail.uc.edu)
+Kevin Ernst \<[ernstki -at- mail.uc.edu](mailto:ernstki%20-at-%20mail.uc.edu)\>
 
 
 License
