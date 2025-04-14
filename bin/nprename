@@ -59,7 +59,7 @@ if ARGV.empty?
 end
 
 # if ARGV[0] looks like a readable file, parse out the ID from that
-if File.exists?(ARGV[0]) and File.stat(ARGV[0]).file? \
+if File.exist?(ARGV[0]) and File.stat(ARGV[0]).file? \
         and File.stat(ARGV[0]).readable?
 
     options[:filename] = ARGV[0]
