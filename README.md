@@ -2,14 +2,19 @@
 ======================================================
 
 This utility helps me keep a standard file naming convention for icons
-downloaded from [The Noun Project][1].
+downloaded from [The Noun Project][np].
 
 This utility does _not_ download the icons. I have my own way of doing this,
 which usually involves picking foreground/background colors on the web site,
-and then doing a screenshot of the image. There doesn't seem to be
-a programmatic way of doing this through the API, and the web site has a nice
-set of pre-selected colors anyway; there's no point in trying to reimplement
-what already works fine in that regard.
+and then doing a screenshot of the image.
+
+> [!TIP]
+> If you're sloppy at this, like I am, and always end up with a white border
+> around the screenshot, you can use [`mogrify -trim`][trim] to remove that.
+
+There doesn't seem to be a programmatic way of doing this through the API, and
+the web site has a nice set of pre-selected colors anyway; there's no point in
+trying to reimplement what already works fine in that regard.
 
 The naming convention I use is:
 
@@ -17,6 +22,7 @@ The naming convention I use is:
 
 …but this can be modified around line 100 of the script (search for
 `newbasename =`).
+
 
 
 Installation
@@ -29,10 +35,18 @@ Clone this repository, then
 
 Make sure that the `bin` directory for the path(s) given by `gem environment
 gempath` are in your shell's search path, _e.g._, by setting something like
-this in your `~/.bash_profile` or `~/.bashrc`:
+this in your `~/.bash_profile` or `~/.profile` (preferred), or `~/.bashrc`:
 
-    # using the built-in 'ruby' for macOS 10.14 (Mojave), for example
-    export PATH="$HOME/.gem/ruby/2.3.0/bin:$PATH"
+    # using Ruby 3.2.3 from rbenv, for example
+    export PATH="$HOME/.gem/ruby/3.2.0/bin:$PATH"
+
+If you only work with the system default `ruby`, you can have Ruby itself make
+figure out what directory that needs to be _for_ you:
+
+    # h/t: https://stackoverflow.com/a/4454366/785213
+    rubymajmin=$(ruby -e 'puts RUBY_VERSION.split(".")[0,2].join(".")')
+    export PATH="$HOME/.gem/ruby/$rubymajmin.0/bin:$PATH"
+    unset rubymajmin
 
 
 Configuration
@@ -109,4 +123,5 @@ License
 [MIT](LICENSE.txt)
 
 
-[1]: https://thenounproject.com
+[np]: https://thenounproject.com
+[trim]: https://imagemagick.org/script/command-line-options.php#trim
